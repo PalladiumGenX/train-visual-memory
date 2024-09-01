@@ -32,8 +32,11 @@ body {
   }
 }
 .bug-here {
-  background-image: url('resources/bug.webp');
+  background-image: url('../public/resources/bug.webp');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+}
+input {
+  color: #000;
 }
