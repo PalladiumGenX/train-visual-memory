@@ -31,3 +31,9 @@ body {
     text-wrap: balance;
   }
 }
+.bug-here {
+  background-image: url('resources/bug.webp');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
