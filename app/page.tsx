@@ -21,6 +21,8 @@ export default function Home() {
   const pathRef = useRef<string[]>([]);
   const [isWaiting, setIsWaiting] = useState(false);
   const waitingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const [audioInitialized, setAudioInitialized] = useState(false);
 
   useEffect(() => {
     if (gameStatus === "showGrid") {
@@ -65,13 +67,33 @@ export default function Home() {
     }
   };
 
+  const initializeAudio = () => {
+    audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    setAudioInitialized(true);
+  };
+
+  const playSound = (soundUrl: string) => {
+    if (!audioContextRef.current || !audioInitialized) return;
+
+    fetch(soundUrl)
+      .then(response => response.arrayBuffer())
+      .then(arrayBuffer => audioContextRef.current!.decodeAudioData(arrayBuffer))
+      .then(audioBuffer => {
+        const source = audioContextRef.current!.createBufferSource();
+        source.buffer = audioBuffer;
+        source.connect(audioContextRef.current!.destination);
+        source.start(0);
+      })
+      .catch(error => console.error('Error playing audio:', error));
+  };
+
   const moveBug = () => {
     const direction = DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)];
+    setCurrentMove(direction);
     setMoveHistory(prev => [...prev, direction]);
   
     // Play the sound for the move
-    const audio = new Audio(moveSounds[direction as keyof typeof moveSounds]);
-    audio.play().catch(error => console.error('Error playing audio:', error));
+    playSound(moveSounds[direction as keyof typeof moveSounds]);
   
     if (currentBugPositionRef.current) {
       const [x, y] = currentBugPositionRef.current;
@@ -87,7 +109,6 @@ export default function Home() {
       const newPosition: [number, number] = [newX, newY];
       currentBugPositionRef.current = newPosition;
       setBugPosition(newPosition);
-      setCurrentMove(direction);
       console.log("New bug position:", newPosition);
     }
   };
@@ -148,6 +169,14 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center lg:p-24">
+      {!audioInitialized && (
+        <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+          onClick={initializeAudio}
+        >
+          Turn on sound (recommended)
+        </button>
+      )}
       <h1 className="text-4xl font-bold mb-8">The Bug Game</h1>
       {gameStatus === "waiting" && (
         <button
