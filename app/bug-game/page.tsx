@@ -24,6 +24,7 @@ export default function BugGame() {
   const audioContextRef = useRef<AudioContext | null>(null);
   const [audioInitialized, setAudioInitialized] = useState(false);
 
+
   useEffect(() => {
     if (gameStatus === "showGrid") {
       const initialPosition: [number, number] = [2,2];
