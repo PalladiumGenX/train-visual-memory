@@ -12,6 +12,7 @@ interface Card {
 interface Props {
   numberOfPairs: number;
 }
+const TOTAL_AVAILABLE_IMAGES = 21;
 
 export default function CardsGameComponent({ numberOfPairs }: Props) {
   const [cards, setCards] = useState<Card[]>([]);
@@ -22,14 +23,22 @@ export default function CardsGameComponent({ numberOfPairs }: Props) {
   // Initialize cards
   useEffect(() => {
     const newCards: Card[] = [];
-    for (let i = 1; i <= numberOfPairs; i++) {
-      // Create pairs of cards
+    // Create array of all possible numbers and shuffle it
+    const availableNumbers = Array.from({ length: TOTAL_AVAILABLE_IMAGES }, (_, i) => i + 1)
+      .sort(() => Math.random() - 0.5);
+    
+    // Take only the first 'numberOfPairs' numbers from the shuffled array
+    const selectedNumbers = availableNumbers.slice(0, numberOfPairs);
+    
+    // Create pairs for each selected number
+    selectedNumbers.forEach((number, index) => {
       newCards.push(
-        { id: i * 2 - 1, number: i, isFlipped: false, isMatched: false },
-        { id: i * 2, number: i, isFlipped: false, isMatched: false }
+        { id: index * 2 + 1, number: number, isFlipped: false, isMatched: false },
+        { id: index * 2 + 2, number: number, isFlipped: false, isMatched: false }
       );
-    }
-    // Shuffle cards
+    });
+  
+    // Shuffle the cards
     setCards(newCards.sort(() => Math.random() - 0.5));
   }, [numberOfPairs]);
 
@@ -93,7 +102,7 @@ export default function CardsGameComponent({ numberOfPairs }: Props) {
                   <div
                     onClick={() => !card.isFlipped && !card.isMatched && handleCardClick(card.id)}
                     className={`
-                      w-full h-[120px]
+                      w-full h-[90px] md:h-[120px]
                       cursor-pointer 
                       rounded-lg 
                       relative
