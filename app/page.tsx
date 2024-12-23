@@ -10,7 +10,7 @@ export default function Home() {
         
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4">Our Games</h2>
-          <div className="flex flex-col md:flex-row gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <GameCard 
               title="Bug Game" 
               description="Test your spatial memory by tracking a bug's movement on a grid."
@@ -22,6 +22,12 @@ export default function Home() {
               description="Improve your visual recall by memorizing the position and orientation of matches."
               imageSrc="/matches-thumbnail.jpg"
               href="/match-game"
+            />
+            <GameCard 
+              title="Cards Game" 
+              description="Improve your visual recall by memorizing the position and orientation of cards."
+              imageSrc="/cards-thumbnail.jpg"
+              href="/cards-game"
             />
           </div>
         </section>
